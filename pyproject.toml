@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "url-shortener"
+version = "0.1.0"
+description = ""
+authors = ["MarcGroc <marcingrochola1@gmail.com>"]
+readme = "README.md"
+packages = [{include = "url_shortener"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^4.1.7"
+pre-commit = "^3.1.1"
+flake8 = "^6.0.0"
+isort = "^5.12.0"
+black = "^23.1.0"
+djangorestframework = "^3.14.0"
+psycopg2 = "^2.9.5"
+celery = "^5.2.7"
+redis = "^4.5.1"
+python-dotenv = "^1.0.0"
+drf-spectacular = "^0.26.0"
+coloredlogs = "^15.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,5 @@
+# TODO create a docker-compose.yml file for the local environment including the following services:
+# - postgres db
+# - backend
+# - celery worker
+# - celery beat
