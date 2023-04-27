@@ -91,4 +91,5 @@ jobs:
           SUPERUSER_USERNAME: admin
           SUPERUSER_PASSWORD: admin1234
           SUPERUSER_EMAIL: q@q.com
-        run: poetry run python manage.py test
+        run: poetry run python manage.py test --verbosity=2
+        timeout-minutes: 3
