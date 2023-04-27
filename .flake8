@@ -5,3 +5,4 @@ exclude =
   __pycache__,
   apps.py
   manage.py,
+  settings.py,
