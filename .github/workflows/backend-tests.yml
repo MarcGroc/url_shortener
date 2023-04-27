@@ -33,11 +33,11 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.local
-          key: poetry-1.2.1
+          key: poetry-1.4.2
 
       - uses: snok/install-poetry@v1
         with:
-          version: 1.2.1
+          version: 1.4.2
           virtualenvs-create: true
           virtualenvs-in-project: true
 
@@ -57,6 +57,9 @@ jobs:
 
       - name: make migrations
         working-directory: .
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: 'True'
         run: poetry run python manage.py makemigrations  && 
           poetry run python manage.py migrate
 
@@ -64,6 +67,7 @@ jobs:
         working-directory: .
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: 'True'
           DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
           CELERY_BROKER_URL: redis://localhost:6379/0
           CELERY_RESULT_BACKEND: redis://localhost:6379/0
