@@ -10,6 +10,7 @@ format:
 lint:
 	echo "Linting app directory"
 	flake8 rest_api/
+	flake8 url_shortener/
 	echo "Linted successfully"
 
 # Local development commands
