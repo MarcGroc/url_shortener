@@ -66,7 +66,11 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: '0.0.0.0'
           DB_PORT: '5432'
-
+          CELERY_BROKER_URL: redis://0.0.0.0:6379/0
+          CELERY_RESULT_BACKEND: redis://0.0.0.0:6379/0
+          SUPERUSER_USERNAME: admin
+          SUPERUSER_PASSWORD: admin1234
+          SUPERUSER_EMAIL: q@q.com
         run: poetry run python manage.py makemigrations  && 
           poetry run python manage.py migrate
 
@@ -82,6 +86,9 @@ jobs:
           DB_HOST: '0.0.0.0'
           DB_PORT: '5432'
           DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
-          CELERY_BROKER_URL: redis://localhost:6379/0
-          CELERY_RESULT_BACKEND: redis://localhost:6379/0
+          CELERY_BROKER_URL: redis://0.0.0.0:6379/0
+          CELERY_RESULT_BACKEND: redis://0.0.0.0:6379/0
+          SUPERUSER_USERNAME: admin
+          SUPERUSER_PASSWORD: admin1234
+          SUPERUSER_EMAIL: q@q.com
         run: poetry run python manage.py test
