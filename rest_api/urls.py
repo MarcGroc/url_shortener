@@ -1,8 +1,5 @@
-from django.urls import include, path
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularSwaggerView,
-)
+from django.urls import path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from .views import RedirectToOriginalURLView, ShortenedURLCreateAPIView
 
@@ -12,5 +9,4 @@ urlpatterns = [
     # path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("", ShortenedURLCreateAPIView.as_view(), name="shortened-link-create"),
     path("<str:short_code>/", RedirectToOriginalURLView.as_view(), name="redirect"),
-
 ]

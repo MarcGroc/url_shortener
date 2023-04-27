@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     """If in development mode, check if superuser exists and create if not"""
+
     def handle(self, *args, **options):
         if not settings.DEBUG:
             return

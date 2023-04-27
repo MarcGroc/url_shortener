@@ -3,7 +3,7 @@ from django.core.validators import URLValidator
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views import View
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics
 from rest_framework.response import Response
 
@@ -17,6 +17,7 @@ class ShortenedURLCreateAPIView(generics.CreateAPIView):
     View for creating a shortened URL, validates the URL, returns the shortened URL and collects the user's IP and
     user agent.
     """
+
     queryset = ShortenedLink.objects.all()
 
     serializer_class = ShortenedURLSerializer
@@ -64,6 +65,7 @@ class RedirectToOriginalURLView(View):
     """
     View for redirecting the user to the original URL, increments the visits counter.
     """
+
     def get(self, request, short_code: ShortenedLink.short_code, *args, **kwargs):
         short_url = get_object_or_404(ShortenedLink, short_code=short_code)
         short_url.visits += 1
