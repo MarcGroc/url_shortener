@@ -34,5 +34,5 @@ checkmigrations:
 	python manage.py makemigrations --check --no-input --dry-run
 
 # Docker commands
-docker-compose:
-	docker-compose deployment/local/docker-compose.yml up --build
+docker-build:
+	docker-compose -f deployment/local/docker-compose.yml up --build

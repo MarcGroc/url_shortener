@@ -1,40 +1,71 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.views import View
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+
 from .models import ShortenedLink
 from .serializers import ShortenedURLSerializer
-from .utils import generate_short_code
+from .tasks import create_shortened_url
 
 
 class ShortenedURLCreateAPIView(generics.CreateAPIView):
-    # TODO check for lazy loading
+    """
+    View for creating a shortened URL, validates the URL, returns the shortened URL and collects the user's IP and
+    user agent.
+    """
     queryset = ShortenedLink.objects.all()
 
     serializer_class = ShortenedURLSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="original_url",
+                description="URL to be shortened",
+                required=True,
+                type=str,
+            )
+        ],
+        responses={200: ShortenedURLSerializer},
+    )
     def create(self, request, *args, **kwargs):
-        original_url = request.data.get('original_url')
-        # TODO: Add validation for the URL
+        original_url = request.data.get("original_url")
+        validate_url = URLValidator()
+
+        try:
+            validate_url(original_url)
+        except ValidationError:
+            return Response(
+                {
+                    "error": "URL is invalid, example URL https://en.wikipedia.org/wiki/URL"
+                },
+                status=400,
+            )
+
         if not original_url:
             return Response({"error": "URL is required"}, status=400)
 
-        short_url_obj, created = ShortenedLink.objects.get_or_create(original_url=original_url)
-        if created:
-            short_url_obj.short_code = generate_short_code()
-            short_url_obj.user_ip = request.META.get('REMOTE_ADDR')
-            short_url_obj.user_agent = request.META.get('HTTP_USER_AGENT')
-            short_url_obj.save()
+        user_ip = request.META.get("REMOTE_ADDR")
+        user_agent = request.META.get("HTTP_USER_AGENT")
 
-        serializer = self.get_serializer(short_url_obj, context={'request': request})
+        short_url_id = create_shortened_url.delay(
+            original_url, user_ip, user_agent
+        ).get()
+        short_url = ShortenedLink.objects.get(id=short_url_id)
+        serializer = self.get_serializer(short_url, context={"request": request})
         return Response(serializer.data)
 
 
 class RedirectToOriginalURLView(View):
-
+    """
+    View for redirecting the user to the original URL, increments the visits counter.
+    """
     def get(self, request, short_code: ShortenedLink.short_code, *args, **kwargs):
-        short_url_obj = get_object_or_404(ShortenedLink, short_code=short_code)
-        short_url_obj.visits += 1
-        short_url_obj.save()
-        return HttpResponseRedirect(short_url_obj.original_url)
+        short_url = get_object_or_404(ShortenedLink, short_code=short_code)
+        short_url.visits += 1
+        short_url.save()
+        return HttpResponseRedirect(short_url.original_url)

@@ -1,5 +1,124 @@
-# TODO create a docker-compose.yml file for the local environment including the following services:
-# - postgres db
-# - backend
-# - celery worker
-# - celery beat
+version: '3.9'
+
+services:
+  db:
+    container_name: db
+    hostname: db
+    image: postgres:14.1-alpine
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+        - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    networks:
+      - rest_api
+
+  rest_api:
+    container_name: rest_api
+    build:
+      context: ../../
+      dockerfile: ./deployment/local/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: >
+      sh -c "poetry run python manage.py check_db
+             poetry run python manage.py makemigrations --noinput
+             poetry run python manage.py migrate --noinput
+             poetry run python manage.py check_or_create_user
+             poetry run python manage.py collectstatic --noinput
+             poetry run gunicorn url_shortener.wsgi:application -c rest_api/config/gunicorn/gunicorn_dev.py"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 120s
+
+    networks:
+      - rest_api
+
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:7.0.0-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./redis_data:/redis_data
+    depends_on:
+      - db
+    networks:
+      - rest_api
+
+  worker:
+    container_name: celery_worker
+    build:
+        context: ../../
+        dockerfile: ./deployment/local/Dockerfile
+    command: >
+      sh -c "poetry run celery -A url_shortener worker -l info"
+    depends_on:
+      - db
+      - redis
+    deploy:
+      restart_policy:
+          condition: on-failure
+          delay: 5s
+          max_attempts: 5
+          window: 120s
+
+    networks:
+      - rest_api
+
+
+  beat:
+    container_name: celery_beat
+    build:
+        context: ../../
+        dockerfile: ./deployment/local/Dockerfile
+    command: >
+      sh -c "poetry run celery -A url_shortener beat --loglevel=info"
+    depends_on:
+      - db
+      - redis
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+        window: 120s
+    networks:
+      - rest_api
+
+
+volumes:
+  db_data:
+  redis:
+
+
+networks:
+    rest_api:
+
+

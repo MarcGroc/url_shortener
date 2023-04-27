@@ -8,5 +8,3 @@ class ShortenedLink(models.Model):
     visits = models.PositiveIntegerField(default=0)
     user_ip = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(null=True, blank=True)
-
-
