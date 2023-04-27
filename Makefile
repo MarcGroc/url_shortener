@@ -10,6 +10,7 @@ format:
 lint:
 	echo "Linting app directory"
 	flake8 rest_api/
+	flake8 url_shortener/
 	echo "Linted successfully"
 
 # Local development commands
@@ -34,5 +35,5 @@ checkmigrations:
 	python manage.py makemigrations --check --no-input --dry-run
 
 # Docker commands
-docker-compose:
-	docker-compose deployment/local/docker-compose.yml up --build
+docker-build:
+	docker-compose -f deployment/local/docker-compose.yml up --build
