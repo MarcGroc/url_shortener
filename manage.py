@@ -20,4 +20,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# TODO kosmetyka dokumentacja linting format, zmienić README, dodac do portfolio i public repo, przerobić c4 diagram
