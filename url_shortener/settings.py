@@ -1,21 +1,21 @@
 import os
 import sys
+import environ
 import logging
 import coloredlogs
 from pathlib import Path
 
-from dotenv import find_dotenv, load_dotenv
-
-load_dotenv(find_dotenv(".env"))
-
+logger = logging.getLogger(__name__)
+env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(os.path.join(BASE_DIR, './.env'))
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = env("DEBUG")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+SECRET_KEY = env("SECRET_KEY")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 
 # Application definition
 
@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_spectacular',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -68,18 +69,18 @@ WSGI_APPLICATION = 'url_shortener.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': os.getenv("DB_SERVER"),
-        'PORT': os.getenv("DB_PORT"),
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env("DB_HOST"),
+        'PORT': env("DB_PORT"),
     }
 }
 # Database connection check settings
 # max_tries is the number of times to try to connect to the database
+MAX_TRIES = 10
 # seconds_to_wait is the number of seconds to wait between each try
-MAX_TRIES = 5
-SECONDS_TO_WAIT = 3
+SECONDS_TO_WAIT = 5
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -110,11 +111,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST API settings
+# DRF settings
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
@@ -167,9 +168,10 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
 # Celery settings
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 
-
+# Custom settings
 SHORTENED_URL_LENGTH = 13

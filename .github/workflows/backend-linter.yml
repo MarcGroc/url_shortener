@@ -1,0 +1,16 @@
+name: Linter
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: pip install flake8
+
+    - name: Run linting
+      run: flake8 --config=.flake8
