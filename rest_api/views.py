@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views import View
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 
 from .models import ShortenedLink
@@ -12,7 +12,7 @@ from .serializers import ShortenedURLSerializer
 from .tasks import create_shortened_url
 
 
-class ShortenedURLCreateAPIView(generics.CreateAPIView):
+class CreateShortenedURL(generics.CreateAPIView):
     """
     View for creating a shortened URL, validates the URL, returns the shortened URL and collects the user's IP and
     user agent.
@@ -56,9 +56,23 @@ class ShortenedURLCreateAPIView(generics.CreateAPIView):
         short_url_id = create_shortened_url.delay(
             original_url, user_ip, user_agent
         ).get()
+
         short_url = ShortenedLink.objects.get(id=short_url_id)
         serializer = self.get_serializer(short_url, context={"request": request})
-        return Response(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class UserShortenedURLListView(generics.ListAPIView):
+    """
+    View for listing the user's shortened URLs, based on the user's IP. Not works correctly if user has dynamic IP.
+    """
+
+    serializer_class = ShortenedURLSerializer
+
+    def get_queryset(self):
+        user_ip = self.request.META.get("REMOTE_ADDR")
+        return ShortenedLink.objects.filter(user_ip=user_ip)
 
 
 class RedirectToOriginalURLView(View):

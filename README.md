@@ -7,7 +7,14 @@
 
 ## Introduction
 
-This is a simple URL shortener written in Python, Django, Django REST Framework, Docker and PostgreSQL.
+This is a simple URL shortener written with:
+- Python
+- Django
+- Django REST Framework
+- Docker
+- PostgreSQL
+- Celery
+- Redis
 
 ## Documentation
 
@@ -63,11 +70,12 @@ docker-compose up --build
 
 ## Usage
 
-1. Go to `http://localhost:8000/`
+1. Go to `http://localhost:8000/create`
 2. Enter a URL in the input field
-3. Click the "POST" button or Enter
+3. Click the "POST" button 
 4. Click or copy the shortened URL 
 5. Paste the shortened URL in your browser
 6. You will be redirected to the original URL
-7. You can also access the admin panel at `http://localhost:8000/admin/` with the credentials you set in the `.env` file
-8. You can also access th OpenAPI docs at `http://localhost:8000/docs/`
+7. You can access all your shortened URLs at `http://localhost:8000/my-urls/`
+8. You can also access the admin panel at `http://localhost:8000/admin/` with the credentials you set in the `.env` file
+9. You can also access th OpenAPI docs at `http://localhost:8000/docs/`
