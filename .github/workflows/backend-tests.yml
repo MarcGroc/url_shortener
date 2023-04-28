@@ -59,18 +59,18 @@ jobs:
         working-directory: .
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DEBUG: 'True'
-          ALLOWED_HOSTS: '*'
+          DEBUG: ${{ secrets.DEBUG }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: '0.0.0.0'
-          DB_PORT: '5432'
-          CELERY_BROKER_URL: redis://0.0.0.0:6379/0
-          CELERY_RESULT_BACKEND: redis://0.0.0.0:6379/0
-          SUPERUSER_USERNAME: admin
-          SUPERUSER_PASSWORD: admin1234
-          SUPERUSER_EMAIL: q@q.com
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
+          CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
+          SUPERUSER_USERNAME: ${{ secrets.SUPERUSER_USERNAME }}
+          SUPERUSER_PASSWORD: ${{ secrets.SUPERUSER_PASSWORD }}
+          SUPERUSER_EMAIL: ${{ secrets.SUPERUSER_EMAIL }}
         run: poetry run python manage.py makemigrations  && 
           poetry run python manage.py migrate
 
@@ -78,18 +78,18 @@ jobs:
         working-directory: .
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DEBUG: 'True'
-          ALLOWED_HOSTS: '*'
+          DEBUG: ${{ secrets.DEBUG }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: '0.0.0.0'
-          DB_PORT: '5432'
-          DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
-          CELERY_BROKER_URL: redis://0.0.0.0:6379/0
-          CELERY_RESULT_BACKEND: redis://0.0.0.0:6379/0
-          SUPERUSER_USERNAME: admin
-          SUPERUSER_PASSWORD: admin1234
-          SUPERUSER_EMAIL: q@q.com
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+#          DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
+          CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
+          CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
+          SUPERUSER_USERNAME: ${{ secrets.SUPERUSER_USERNAME }}
+          SUPERUSER_PASSWORD: ${{ secrets.SUPERUSER_PASSWORD }}
+          SUPERUSER_EMAIL: ${{ secrets.SUPERUSER_EMAIL }}
         run: poetry run python manage.py test --verbosity=2
         timeout-minutes: 5
