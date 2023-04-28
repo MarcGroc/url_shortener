@@ -9,7 +9,7 @@ class ShortenedURLSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShortenedLink
-        fields = ["original_url", "full_short_url", "visits"]
+        fields = ["original_url", "full_short_url", "visits", "user_ip"]
         read_only_fields = ["visits"]
 
     def get_full_short_url(self, obj):
