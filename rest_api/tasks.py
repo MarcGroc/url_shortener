@@ -16,24 +16,6 @@ def delete_old_urls() -> None:
     ShortenedLink.objects.filter(created_at__lt=expiration_date).delete()
 
 
-# @shared_task
-# def create_shortened_url(
-#     original_url: str, user_ip: str, user_agent: str, custom_short_code: Optional[str]
-# ) -> Union[Dict[str, str], int]:
-#     short_url, created = ShortenedLink.objects.get_or_create(original_url=original_url)
-#     if created:
-#         short_url.short_code = (
-#             custom_short_code if custom_short_code else generate_short_code()
-#         )
-#         short_url.user_ip = user_ip
-#         short_url.user_agent = user_agent
-#         try:
-#             short_url.save()
-#         except IntegrityError:
-#             return {"error": "Short code already exists, please try another one."}
-#     return short_url.id
-
-
 @shared_task
 def create_shortened_url(
     original_url: str, user_ip: str, user_agent: str, custom_short_code: Optional[str]

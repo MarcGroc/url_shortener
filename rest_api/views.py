@@ -45,11 +45,10 @@ class CreateShortenedURL(generics.CreateAPIView):
 
         if isinstance(result, dict) and "error" in result:
             return Response(
-                {"error": result["error"], "original_url": original_url},
+                {"error": result["error"]},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # short_url_id = result["id"]
         short_url = ShortenedLink.objects.get(id=result)
         serializer = self.get_serializer(short_url, context={"request": request})
 
