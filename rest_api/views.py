@@ -43,14 +43,14 @@ class CreateShortenedURL(generics.CreateAPIView):
             original_url, user_ip, user_agent, custom_short_code
         ).get()
 
-        if "error" in result:
+        if isinstance(result, dict) and "error" in result:
             return Response(
                 {"error": result["error"], "original_url": original_url},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        short_url_id = result["id"]
-        short_url = ShortenedLink.objects.get(id=short_url_id)
+        # short_url_id = result["id"]
+        short_url = ShortenedLink.objects.get(id=result)
         serializer = self.get_serializer(short_url, context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -64,8 +64,7 @@ class UserShortenedURLListView(generics.ListAPIView):
 
     serializer_class = ShortenedURLSerializer
 
-    @method_decorator(ratelimit(key="ip", rate="12/m", method="GET", block=True))
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
         user_ip = self.request.META.get("REMOTE_ADDR")
         return ShortenedLink.objects.filter(user_ip=user_ip)
 

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from datetime import timedelta
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from celery import shared_task
 from django.db import IntegrityError
@@ -17,21 +17,40 @@ def delete_old_urls() -> None:
     ShortenedLink.objects.filter(created_at__lt=expiration_date).delete()
 
 
+# @shared_task
+# def create_shortened_url(
+#     original_url: str, user_ip: str, user_agent: str, custom_short_code: Optional[str]
+# ) -> Union[Dict[str, str], int]:
+#     short_url, created = ShortenedLink.objects.get_or_create(original_url=original_url)
+#     if created:
+#         short_url.short_code = (
+#             custom_short_code if custom_short_code else generate_short_code()
+#         )
+#         short_url.user_ip = user_ip
+#         short_url.user_agent = user_agent
+#         try:
+#             short_url.save()
+#         except IntegrityError:
+#             return {"error": "Short code already exists, please try another one."}
+#     return short_url.id
+
 @shared_task
 def create_shortened_url(
     original_url: str, user_ip: str, user_agent: str, custom_short_code: Optional[str]
-) -> Dict[str, str] | dict[str, int]:
-    try:
-        short_url = ShortenedLink.objects.get(original_url=original_url)
-    except ShortenedLink.DoesNotExist:
-        short_url = ShortenedLink(original_url=original_url)
+) -> Union[Dict[str, str], int]:
+    if custom_short_code:
+        try:
+            ShortenedLink.objects.get(short_code=custom_short_code)
+            return {"error": "Short code already exists, please try another one."}
+        except ShortenedLink.DoesNotExist:
+            pass
+
+    short_url, created = ShortenedLink.objects.get_or_create(original_url=original_url)
+    if created:
         short_url.short_code = (
             custom_short_code if custom_short_code else generate_short_code()
         )
         short_url.user_ip = user_ip
         short_url.user_agent = user_agent
-        try:
-            short_url.save()
-        except IntegrityError:
-            return {"error": "Short code already exists, please try another one."}
-    return {"id": short_url.id}
+        short_url.save()
+    return short_url.id
