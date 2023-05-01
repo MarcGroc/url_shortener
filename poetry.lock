@@ -352,6 +352,54 @@ docs = ["furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-
 testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
+name = "django-fakeredis"
+version = "0.1.2"
+description = "Easier to use fakeredis in Django."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-fakeredis-0.1.2.tar.gz", hash = "sha256:b135731b161837c20bca9db20b561462bee5d248c41a6b8ae7c70e9d7a1d527a"},
+    {file = "django_fakeredis-0.1.2-py3-none-any.whl", hash = "sha256:3a4372bb9459b2332a387ae06e0d117b982280206a74f54d79864cc2e3a8a869"},
+]
+
+[package.dependencies]
+django-redis = "*"
+fakeredis = "*"
+redis = "*"
+
+[[package]]
+name = "django-ratelimit"
+version = "4.0.0"
+description = "Cache-based rate-limiting for Django."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-ratelimit-4.0.0.tar.gz", hash = "sha256:19cba9e8101277f28c7a974c54c997067341ab30175431d3739e8ffb63cdd2b2"},
+    {file = "django_ratelimit-4.0.0-py2.py3-none-any.whl", hash = "sha256:a610b5fd052c843a589084f6934bc6d827ec6242d5965110ebd436ca5a59ef39"},
+]
+
+[[package]]
+name = "django-redis"
+version = "5.2.0"
+description = "Full featured redis cache backend for Django."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "django-redis-5.2.0.tar.gz", hash = "sha256:8a99e5582c79f894168f5865c52bd921213253b7fd64d16733ae4591564465de"},
+    {file = "django_redis-5.2.0-py3-none-any.whl", hash = "sha256:1d037dc02b11ad7aa11f655d26dac3fb1af32630f61ef4428860a2e29ff92026"},
+]
+
+[package.dependencies]
+Django = ">=2.2"
+redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
+
+[package.extras]
+hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
+
+[[package]]
 name = "djangorestframework"
 version = "3.14.0"
 description = "Web APIs for Django, made easy."
@@ -390,6 +438,26 @@ uritemplate = ">=2.0.0"
 [package.extras]
 offline = ["drf-spectacular-sidecar"]
 sidecar = ["drf-spectacular-sidecar"]
+
+[[package]]
+name = "fakeredis"
+version = "2.11.2"
+description = "Fake implementation of redis API for testing purposes."
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "fakeredis-2.11.2-py3-none-any.whl", hash = "sha256:69a504328a89e5e5f2d05a4236b570fb45244c96997c5002c8c6a0503b95f289"},
+    {file = "fakeredis-2.11.2.tar.gz", hash = "sha256:e0fef512b8ec49679d373456aa4698a4103005ecd7ca0b13170a2c1d3af949c5"},
+]
+
+[package.dependencies]
+redis = ">=4"
+sortedcontainers = ">=2.4,<3.0"
+
+[package.extras]
+json = ["jsonpath-ng (>=1.5,<2.0)"]
+lua = ["lupa (>=1.14,<2.0)"]
 
 [[package]]
 name = "filelock"
@@ -877,6 +945,18 @@ files = [
 ]
 
 [[package]]
+name = "sortedcontainers"
+version = "2.4.0"
+description = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
+    {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
+]
+
+[[package]]
 name = "sqlparse"
 version = "0.4.3"
 description = "A non-validating SQL parser."
@@ -972,4 +1052,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ef6b7cc54f5d8c96d294c19f1f69f488685ed9ef85811e44c3a027ce25b6405a"
+content-hash = "464f855f0c0e8882261c3fd5165c9755377f6dfdbfb74dcc58dd39711d39d2e0"

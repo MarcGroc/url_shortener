@@ -2,6 +2,7 @@ import json
 from unittest.mock import ANY, MagicMock, patch
 
 from django.urls import reverse
+from django_fakeredis import FakeRedis
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -75,6 +76,7 @@ class ShortenedURLCreateAPIViewTests(APITestCase):
             self.shortened_link["original_url"],
             ANY,
             ANY,
+            ANY,
         )
         self.assertEqual(ShortenedLink.objects.count(), 1)
 
@@ -87,6 +89,7 @@ class RedirectToOriginalURLViewTests(APITestCase):
             visits=0,
         )
 
+    @FakeRedis(path="rest_api.views")
     def test_should_increment_visits_on_shortened_url(self):
         initial_visits = self.shortened_link.visits
 
@@ -104,7 +107,7 @@ class UserShortenedURLListViewTests(APITestCase):
         # ShortenedLink.objects.all().delete()
         self.shortened_link = {
             "original_url": "https://www.google.com",
-            "short_code": "hiwhdhh12",
+            "short_code": "hi1",
             "created_at": "2023-04-01 12:00:00",
             "visits": 0,
             "user_ip": "0.0.0.0",
@@ -113,6 +116,7 @@ class UserShortenedURLListViewTests(APITestCase):
         }
         self.other_user_ip = "1.1.1.1"
 
+    @FakeRedis(path="rest_api.views")
     def test_should_return_user_shortened_url_list_based_on_user_IP(self):
         # Create two shortened URLs with the same user IP address
         ShortenedLink.objects.create(
