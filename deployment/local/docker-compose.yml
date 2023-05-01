@@ -69,6 +69,8 @@ services:
       - ./redis_data:/redis_data
     depends_on:
       - db
+    env_file:
+      - .env
     networks:
       - rest_api
 
