@@ -4,7 +4,6 @@ from datetime import timedelta
 from typing import Dict, Optional, Union
 
 from celery import shared_task
-from django.db import IntegrityError
 from django.utils import timezone
 
 from rest_api.models import ShortenedLink
@@ -33,6 +32,7 @@ def delete_old_urls() -> None:
 #         except IntegrityError:
 #             return {"error": "Short code already exists, please try another one."}
 #     return short_url.id
+
 
 @shared_task
 def create_shortened_url(

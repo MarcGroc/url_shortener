@@ -2,9 +2,10 @@ import json
 from unittest.mock import ANY, MagicMock, patch
 
 from django.urls import reverse
+from django_fakeredis import FakeRedis
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django_fakeredis import FakeRedis
+
 from rest_api.models import ShortenedLink
 
 
@@ -18,7 +19,7 @@ class ShortenedURLCreateAPIViewTests(APITestCase):
             "visits": 0,
             "user_ip": "0.0.0.0",
             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/90.0.4430.93 Safari/537.36",
+            "Chrome/90.0.4430.93 Safari/537.36",
         }
 
     @patch("rest_api.tasks.create_shortened_url.apply_async")
@@ -53,7 +54,7 @@ class ShortenedURLCreateAPIViewTests(APITestCase):
 
     @patch("rest_api.tasks.create_shortened_url.delay")
     def test_should_return_object_if_original_url_already_in_database(
-            self, mock_create_shortened_url
+        self, mock_create_shortened_url
     ):
         shortened_link = ShortenedLink.objects.create(
             original_url=self.shortened_link["original_url"],
@@ -88,7 +89,7 @@ class RedirectToOriginalURLViewTests(APITestCase):
             visits=0,
         )
 
-    @FakeRedis(path='rest_api.views')
+    @FakeRedis(path="rest_api.views")
     def test_should_increment_visits_on_shortened_url(self):
         initial_visits = self.shortened_link.visits
 
@@ -111,11 +112,11 @@ class UserShortenedURLListViewTests(APITestCase):
             "visits": 0,
             "user_ip": "0.0.0.0",
             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/90.0.4430.93 Safari/537.36",
+            "Chrome/90.0.4430.93 Safari/537.36",
         }
         self.other_user_ip = "1.1.1.1"
 
-    @FakeRedis(path='rest_api.views')
+    @FakeRedis(path="rest_api.views")
     def test_should_return_user_shortened_url_list_based_on_user_IP(self):
         # Create two shortened URLs with the same user IP address
         ShortenedLink.objects.create(
