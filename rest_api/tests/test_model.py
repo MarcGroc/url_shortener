@@ -5,6 +5,7 @@ from rest_api.models import ShortenedLink
 
 class ShortenedLinkModelTest(TestCase):
     def setUp(self) -> None:
+        super().setUp()
         self.shortened_link = {
             "original_url": "https://www.google.com",
             "short_code": "hiwhdhh12",

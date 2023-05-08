@@ -1,5 +1,5 @@
 # URL shortener
-
+ ### A simple URL shortener with IP and click tracking.
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
